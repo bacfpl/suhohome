@@ -40,7 +40,7 @@
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+      <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
         <a class="navbar-brand" href="#">Admin Panel</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -89,9 +89,17 @@
                     <p>Chào mừng đến trang quản trị!</p>
                     </div>
 
-                <div id="products" style="display: none;">
+                <div id="products" >
                     <h2><i class="fas fa-box-open"></i> Quản lý Sản phẩm</h2>
-                    <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#addProductModal"><i class="fas fa-plus"></i> Thêm Sản phẩm</button>
+                    <div class="mb-3">
+                        <button class="btn btn-primary" data-toggle="modal" data-target="#addProductModal"><i class="fas fa-plus"></i> Thêm Sản phẩm</button>
+                        <div class="input-group mt-2">
+                            <input type="text" class="form-control" id="searchProductName" placeholder="Tìm kiếm theo tên sản phẩm">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button" id="searchProductButton"><i class="fas fa-search"></i> Tìm</button>
+                            </div>
+                        </div>
+                    </div>
 
                     <table class="table table-bordered table-striped">
                         <thead>
@@ -104,13 +112,24 @@
                                 <th>Hành động</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="productTableBody">
                             <tr>
                                 <td>1</td>
                                 <td><img src="placeholder.png" alt="Sản phẩm 1" width="50"></td>
                                 <td>Sản phẩm mẫu 1</td>
                                 <td>100.000 VNĐ</td>
                                 <td>Điện thoại</td>
+                                <td>
+                                    <button class="btn btn-sm btn-info"><i class="fas fa-edit"></i> Sửa</button>
+                                    <button class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i> Xóa</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td><img src="placeholder.png" alt="Sản phẩm 2" width="50"></td>
+                                <td>Sản phẩm khác</td>
+                                <td>200.000 VNĐ</td>
+                                <td>Máy tính</td>
                                 <td>
                                     <button class="btn btn-sm btn-info"><i class="fas fa-edit"></i> Sửa</button>
                                     <button class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i> Xóa</button>
@@ -147,7 +166,7 @@
                                             <select class="form-control" id="productType">
                                                 <option value="dien-thoai">Điện thoại</option>
                                                 <option value="may-tinh">Máy tính</option>
-                                                </select>
+                                            </select>
                                         </div>
                                         <div class="form-group">
                                             <label for="productImage">Ảnh sản phẩm:</label>
@@ -173,7 +192,7 @@
                                     </button>
                                 </div>
                                 <div class="modal-body">
-                                    </div>
+                                </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
                                     <button type="button" class="btn btn-primary">Lưu Thay Đổi</button>
@@ -203,10 +222,15 @@
                     </div>
                 </div>
 
-                <div id="variants" style="display: none;">
+                <div id="variants" >
                     <h2><i class="fas fa-swatchbook"></i> Quản lý Biến thể Sản phẩm</h2>
                     <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#addVariantModal"><i class="fas fa-plus"></i> Thêm Biến thể</button>
-
+                    <div class="input-group mt-2">
+                            <input type="text" class="form-control" id="searchProductName" placeholder="Tìm kiếm theo tên sản phẩm">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button" id="searchProductButton"><i class="fas fa-search"></i> Tìm</button>
+                            </div>
+                        </div>
                     <table class="table table-bordered table-striped">
                         <thead>
                             <tr>
@@ -252,7 +276,7 @@
                                             <label for="variantProduct">Thuộc sản phẩm:</label>
                                             <select class="form-control" id="variantProduct">
                                                 <option value="1">Sản phẩm mẫu 1</option>
-                                                </select>
+                                            </select>
                                         </div>
                                         <div class="form-group">
                                             <label for="variantImageLarge">Ảnh biến thể lớn:</label>
@@ -274,10 +298,15 @@
 
                     </div>
 
-                <div id="posts" style="display: none;">
+                <div id="posts" >
                     <h2><i class="fas fa-newspaper"></i> Quản lý Bài Post</h2>
                     <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#addPostModal"><i class="fas fa-plus"></i> Thêm Bài Post</button>
-
+                    <div class="input-group mt-2">
+                            <input type="text" class="form-control" id="searchProductName" placeholder="Tìm kiếm theo tên sản phẩm">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button" id="searchProductButton"><i class="fas fa-search"></i> Tìm</button>
+                            </div>
+                        </div>
                     <table class="table table-bordered table-striped">
                         <thead>
                             <tr>
@@ -344,3 +373,7 @@
                             </div>
                         </div>
                     </div>
+                    </div>
+            </main>
+        </div>
+    </div>

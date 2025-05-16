@@ -21,14 +21,19 @@ class ProductModel extends DataBase {
             return 0; // Trả về 0 trong trường hợp lỗi
         }
     }
-
-    /**
-     * Lấy danh sách sản phẩm theo trang.
-     *
-     * @param int $limit Số lượng sản phẩm trên mỗi trang.
-     * @param int $page  Số trang hiện tại.
-     * @return array Mảng chứa danh sách sản phẩm.
-     */
+    public function getTotalDetails($id): int {
+        try {
+            $stmt = $this->conn->prepare("SELECT COUNT(*) AS total FROM bt_product WHERE id_product=:id");
+            $stmt->bindParam(':id',$id,PDO::PARAM_INT);
+            $stmt->execute();
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $row['total'];
+        } catch (PDOException $e) {
+            // Ghi log lỗi hoặc xử lý theo cách phù hợp với ứng dụng của bạn
+            error_log("Lỗi khi lấy tổng số sản phẩm: " . $e->getMessage());
+            return 0; // Trả về 0 trong trường hợp lỗi
+        }
+    }
     public function getProductsByPage(int $limit, int $page): array {
         $offset = ($page - 1) * $limit;
         try {
@@ -43,7 +48,20 @@ class ProductModel extends DataBase {
             return []; // Trả về mảng rỗng trong trường hợp lỗi
         }
     }
-
+    public function getDetailsByPage(int $limit, int $page): array {
+        $offset = ($page - 1) * $limit;
+        try {
+            $stmt = $this->conn->prepare("SELECT * FROM bt_product LIMIT :limit OFFSET :offset");
+            $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+            $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            // Ghi log lỗi hoặc xử lý theo cách phù hợp với ứng dụng của bạn
+            error_log("Lỗi khi lấy sản phẩm theo trang: " . $e->getMessage());
+            return []; // Trả về mảng rỗng trong trường hợp lỗi
+        }
+    } 
     public function getProductDetailByID(int $id): array {
             try{
                // Truy vấn lấy thông tin sản phẩm theo ID
@@ -73,9 +91,26 @@ class ProductModel extends DataBase {
                 return []; // Trả về mảng rỗng trong trường hợp lỗi
             }
     }
+    public function getDetailByProductId($id) {
+         try {
 
+                // Update existing post
+                $stmt = $this->conn->prepare("select * from bt_product WHERE id_product = :id");
+                $stmt->bindParam(':id', $id, PDO::PARAM_INT); // Bind the ID
+        
+             
+          
+            $stmt->execute();
+             return $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        public function insert($name,$price,$img,$content,$id=null) {
+        } catch (PDOException $e) {
+            error_log("Database error : " . $e->getMessage()); // Log the error
+            echo $e;
+            return null;
+           
+        }
+    }
+    public function insertProduct($name,$price,$img,$content,$id=null) {
             
         try {
             if ($id) {
@@ -111,10 +146,56 @@ class ProductModel extends DataBase {
            
         }
     }
-
-  public function delete($id) {
+    public function UpdateDeatailOrInsertId($name,$big_image,$small_image,$idProduct=null,$id=null) {
         try {
+                if ($id) {
+                    // Update existing bt_product
+                    $stmt = $this->conn->prepare("UPDATE bt_product SET name = :name, img_src_big = :big_img, img_src_small = :small_img WHERE id = :id");
+                    $stmt->bindParam(':id', $id, PDO::PARAM_INT); // Bind the ID
+                } else {
+                    // Insert new bt_product
+                    $stmt = $this->conn->prepare("INSERT INTO bt_product (name, img_src_big, img_src_small) VALUES (:name,:big_img,:small_img)");
+                }
+                    $stmt->bindParam(':name', $name, PDO::PARAM_STR);
+                    $stmt->bindParam(':big_img', $big_image, PDO::PARAM_STR);
+                    $stmt->bindParam(':small_img', $small_image, PDO::PARAM_STR);
+                    $stmt->bindParam(':id_product', $idProduct, PDO::PARAM_INT);
+                    $stmt->execute();
+
+                // LẤY LẠI DATA ĐÃ THÊM VÀO
+                if ($id) {
+                    $stmt = $this->conn->prepare("SELECT * FROM bt_product WHERE id = :id");
+                    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+                    $stmt->execute();
+                    return $stmt->fetch(PDO::FETCH_ASSOC); //return a single row
+                } else {
+                    $lastId = $this->conn->lastInsertId();
+                    $stmt = $this->conn->prepare("SELECT * FROM bt_product WHERE id = :lastId");
+                    $stmt->bindParam(':lastId', $lastId, PDO::PARAM_INT);
+                    $stmt->execute();
+                    return $stmt->fetch(PDO::FETCH_ASSOC); //return a single row
+                }
+
+            } catch (PDOException $e) {
+                error_log("Database error : " . $e->getMessage()); // Log the error
+                echo $e;
+                return null;
+            
+            }
+    }
+    public function deleteProduct($id) {
+        try {
+ 
             if ($id) {
+                $stmt = $this->conn->prepare("SELECT id FROM bt_product WHERE id_product = :id");
+                $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+                $stmt->execute();
+                $result = $stmt->fetch(PDO::FETCH_ASSOC);
+                if (!empty($result['id']) && is_array($result['id'])) {
+                   foreach ($result["id"] as $index ) {
+                        $this->deleteDetail($index);            
+                    }
+                }
                 // Fetch the image path before deleting the database record
                 $stmt = $this->conn->prepare("SELECT img_src FROM product WHERE id = :id");
                 $stmt->bindParam(':id', $id, PDO::PARAM_INT);
@@ -151,62 +232,7 @@ class ProductModel extends DataBase {
             return false;
         }
     }
-    public function getDetailByProductId($id) {
-         try {
-
-                // Update existing post
-                $stmt = $this->conn->prepare("select * from bt_product WHERE id_product = :id");
-                $stmt->bindParam(':id', $id, PDO::PARAM_INT); // Bind the ID
-        
-             
-          
-            $stmt->execute();
-             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        } catch (PDOException $e) {
-            error_log("Database error : " . $e->getMessage()); // Log the error
-            echo $e;
-            return null;
-           
-        }
-    }
-
-     public function UpdateDeatailOrInsertId($name,$big_image,$small_image,$id=null) {
-         try {
-                if ($id) {
-                    // Update existing bt_product
-                    $stmt = $this->conn->prepare("UPDATE bt_product SET name = :name, img_src_big = :big_img, img_src_small = :small_img WHERE id = :id");
-                    $stmt->bindParam(':id', $id, PDO::PARAM_INT); // Bind the ID
-                } else {
-                    // Insert new bt_product
-                    $stmt = $this->conn->prepare("INSERT INTO bt_product (name, img_src_big, img_src_small) VALUES (:name,:big_img,:small_img)");
-                }
-                $stmt->bindParam(':name', $name, PDO::PARAM_STR);
-                $stmt->bindParam(':big_img', $big_image, PDO::PARAM_STR);
-                $stmt->bindParam(':small_img', $small_image, PDO::PARAM_STR);
-                 $stmt->execute();
-          if ($id) {
-                $stmt = $this->conn->prepare("SELECT * FROM bt_product WHERE id = :id");
-                $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-                $stmt->execute();
-                return $stmt->fetch(PDO::FETCH_ASSOC); //return a single row
-            } else {
-                $lastId = $this->conn->lastInsertId();
-                $stmt = $this->conn->prepare("SELECT * FROM bt_product WHERE id = :lastId");
-                $stmt->bindParam(':lastId', $lastId, PDO::PARAM_INT);
-                $stmt->execute();
-                return $stmt->fetch(PDO::FETCH_ASSOC); //return a single row
-            }
-
-        } catch (PDOException $e) {
-            error_log("Database error : " . $e->getMessage()); // Log the error
-            echo $e;
-            return null;
-           
-        }
-    }
-
-       public function DeleteDetail($id) {
+    public function deleteDetail($id) {
              try {
             if ($id) {
                 // Fetch the image path before deleting the database record
@@ -248,6 +274,13 @@ class ProductModel extends DataBase {
             return false;
         }
     }
+
+
+
+
+
+
+   
 
 }
 
