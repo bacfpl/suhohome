@@ -176,7 +176,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-                                    <button type="button" class="btn btn-primary">Lưu</button>
+                                    <button type="button" class="btn btn-primary" id="saveProductButton">Lưu</button>
                                 </div>
                             </div>
                         </div>
@@ -201,11 +201,12 @@
                         </div>
                     </div>
 
-                    <div class="modal fade" id="deleteProductModal" tabindex="-1" aria-labelledby="deleteProductModalLabel" aria-hidden="true">
+                    <div class="modal fade" id="deleteProductModal" tabindex="-1" aria-labelledby="deleteProductModalLabel" aria-hidden="false">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="deleteProductModalLabel">Xác nhận xóa sản phẩm</h5>
+                                    <div id="id-delete"></div>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -215,7 +216,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
-                                    <button type="button " class="btn btn-danger" id="btnDlPrMd" data-dismiss="modal" >Xóa</button>
+                                    <button type="button " class="btn btn-danger" id="btnDlPrMd"  >Xóa</button>
                                 </div>
                             </div>
                         </div>
@@ -243,7 +244,7 @@
                     <h2><i class="fas fa-swatchbook"></i> Quản lý Biến thể Sản phẩm</h2>
                     <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#addVariantModal"><i class="fas fa-plus"></i> Thêm Biến thể</button>
                     <div class="input-group mt-2">
-                            <input type="text" class="form-control" id="searchProductName" placeholder="Tìm kiếm theo tên sản phẩm">
+                            <input type="text" class="form-control" id="searchProductName" placeholder="Tìm kiếm theo mã sản phẩm">
                             <div class="input-group-append">
                                 <button class="btn btn-outline-secondary" type="button" id="searchProductButton"><i class="fas fa-search"></i> Tìm</button>
                             </div>
@@ -335,7 +336,7 @@
                     <h2><i class="fas fa-newspaper"></i> Quản lý Bài Post</h2>
                     <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#addPostModal"><i class="fas fa-plus"></i> Thêm Bài Post</button>
                     <div class="input-group mt-2">
-                            <input type="text" class="form-control" id="searchProductName" placeholder="Tìm kiếm theo tên sản phẩm">
+                            <input type="text" class="form-control" id="searchProductName" placeholder="Tìm kiếm theo tên bài đăng"/>
                             <div class="input-group-append">
                                 <button class="btn btn-outline-secondary" type="button" id="searchProductButton"><i class="fas fa-search"></i> Tìm</button>
                             </div>
@@ -358,6 +359,7 @@
                                 <td>Admin</td>
                                 <td>2023-10-26</td>
                                 <td><img src="placeholder-post.png" alt="Bài viết 1" width="80"></td>
+                              
                                 <td>
                                     <button class="btn btn-sm btn-info"><i class="fas fa-edit"></i> Sửa</button>
                                     <button class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i> Xóa</button>
@@ -401,7 +403,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-                                    <button type="button" class="btn btn-primary">Lưu</button>
+                                    <button type="button" id="savePostButton" class="btn btn-primary">Lưu</button>
                                 </div>
                             </div>
                         </div>

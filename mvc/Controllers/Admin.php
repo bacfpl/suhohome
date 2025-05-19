@@ -168,7 +168,7 @@ require_once("./mvc/Models/ProductModel.php");
                 }
                 
         }
-        public static function GetProductsByName(){
+        public static function GetProductsByName($name){
             header('Content-Type: application/json');
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $index = $_POST['index'] ?? 1;
@@ -182,11 +182,11 @@ require_once("./mvc/Models/ProductModel.php");
                     $limit = 5;
                     $productModel= new ProductModel();
                     $currentPage = isset($_GET['page']) ? intval($_GET['page']) : $index;
-                    $totalProducts = $productModel->getTotalProducts($id);
-                    $totalProducts = ceil($totalProducts / $limit);
-                    $product = $productModel->getProductsByPage($limit, $currentPage);
-                    $product["totalPages"];
-                    echo json_encode($product);
+                    // $totalProducts = $productModel->getTotalProducts($id);
+                    // $totalProducts = ceil($totalProducts / $limit);
+                    // $product = $productModel->getProductsByPage($limit, $currentPage);
+                    // $product["totalPages"];
+                    // echo json_encode($product);
                     
                 }
                 else{
