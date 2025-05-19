@@ -10,6 +10,7 @@ require_once("./mvc/Models/ProductModel.php");
             $show = parent :: view("AdminPage", 
             ["Page" => "Admin"]);
         }
+        
         public static function GetPosts() {
                 header('Content-Type: application/json');
                 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -17,10 +18,11 @@ require_once("./mvc/Models/ProductModel.php");
                 }
                 $limit = 10;
                 $post= new PostModel();
-                $currentPage = isset($_GET['page']) ? intval($_GET['page']) : $index;
+
                 $totalPosts = $post->getTotalPosts();
-                $totalPosts = ceil($totalPosts / $limit);
-                $post = $post->getPostsByPage($limit, $currentPage);
+                $totalPages = ceil($totalPosts / $limit);
+                $post = $post->getPostsByPage($limit, $index);
+                $post["totalPages"]=$totalPages;
                 echo json_encode($post);
         }
         public static function AddPost() {
@@ -144,18 +146,47 @@ require_once("./mvc/Models/ProductModel.php");
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $index = $_POST['index'] ?? 1;
                     $id = $_POST['id'] ?? 1;
+                    $name = $_POST['name'] ?? "";
                     if (empty($id) || !is_numeric($id)) {
                     $response = ['status' => 'error', 'message' => 'Invalid post ID.'];
                     echo json_encode($response);
                     return;
                     }
-                    $limit = 10;
+                    $limit = 5;
                     $productModel= new ProductModel();
                     $currentPage = isset($_GET['page']) ? intval($_GET['page']) : $index;
-                    $totalProducts = $productModel->getTotalDetails($id);
+                    $totalProducts = $productModel->getTotalProducts($id);
                     $totalProducts = ceil($totalProducts / $limit);
-                    $post = $productModel->getProductsByPage($limit, $currentPage);
-                    echo json_encode($post);
+                    $product = $productModel->getProductsByPage($limit, $currentPage);
+                    $product["totalPages"]=$totalProducts;
+                    echo json_encode($product);
+                    
+                }
+                else{
+                    echo json_encode(['status' => 'error', 'message' => 'Invalid request method. Use POST.']);
+
+                }
+                
+        }
+        public static function GetProductsByName(){
+            header('Content-Type: application/json');
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                    $index = $_POST['index'] ?? 1;
+
+                    $name = $_POST['name'] ?? "";
+                    if (empty($name)) {
+                    $response = ['status' => 'error', 'message' => 'Invalid product ID.'];
+                    echo json_encode($response);
+                    return;
+                    }
+                    $limit = 5;
+                    $productModel= new ProductModel();
+                    $currentPage = isset($_GET['page']) ? intval($_GET['page']) : $index;
+                    $totalProducts = $productModel->getTotalProducts($id);
+                    $totalProducts = ceil($totalProducts / $limit);
+                    $product = $productModel->getProductsByPage($limit, $currentPage);
+                    $product["totalPages"];
+                    echo json_encode($product);
                     
                 }
                 else{
@@ -275,12 +306,12 @@ require_once("./mvc/Models/ProductModel.php");
                 echo json_encode(['status' => 'error', 'message' => 'Invalid request method. Use POST.']);
             }
         }
-        public static function GetDetails() {
+        public static function GetDetail() {
 
             header('Content-Type: application/json');
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-                $id = $_POST['id'] ?? null; // Get the ID for deletion
+                $limit=4;
+                $id = $_POST['id_product'] ?? null; // Get the ID for deletion
 
                 // Input Validation for ID
                 if (empty($id) || !is_numeric($id)) {
@@ -290,15 +321,18 @@ require_once("./mvc/Models/ProductModel.php");
                 }
 
                 $productModel = new ProductModel(); // Create instance of your model
+                $total=$productModel->getTotalDetails($id);
                 $data = $productModel->getDetailByProductId($id); // Use the delete method
 
-                if ($data) {
+                if ($data&&$total>0) {
                     $response = ['status' => 'success', 'message' => ' successfully!'];
                 } else {
                     $response = ['status' => 'error', 'message' => 'Failed!'];
                 }
-
-                echo json_encode($data);
+                $totalPages=ceil($total/$limit);
+                $data["totalPages"]=$totalPages;
+                 echo json_encode($data);
+                
             } else {
                 echo json_encode(['status' => 'error', 'message' => 'Invalid request method. Use POST.']);
             }

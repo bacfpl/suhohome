@@ -101,7 +101,7 @@
                         </div>
                     </div>
 
-                    <table class="table table-bordered table-striped">
+                    <table class="table table-bordered table-striped" id="">
                         <thead>
                             <tr>
                                 <th>ID</th>
@@ -112,7 +112,7 @@
                                 <th>Hành động</th>
                             </tr>
                         </thead>
-                        <tbody id="productTableBody">
+                        <tbody id="table_product">
                             <tr>
                                 <td>1</td>
                                 <td><img src="placeholder.png" alt="Sản phẩm 1" width="50"></td>
@@ -215,11 +215,28 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
-                                    <button type="button" class="btn btn-danger">Xóa</button>
+                                    <button type="button " class="btn btn-danger" id="btnDlPrMd" data-dismiss="modal" >Xóa</button>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <div class="mt-3">
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center" id="pagination-product">
+            <li class="page-item disabled">
+                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Trước</a>
+            </li>
+            <li class="page-item active" aria-current="page">
+                <a class="page-link" href="#">1 <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item">
+                <a class="page-link" href="#">Sau</a>
+            </li>
+        </ul>
+    </nav>
+</div>
                 </div>
 
                 <div id="variants" >
@@ -231,7 +248,7 @@
                                 <button class="btn btn-outline-secondary" type="button" id="searchProductButton"><i class="fas fa-search"></i> Tìm</button>
                             </div>
                         </div>
-                    <table class="table table-bordered table-striped">
+                    <table class="table table-bordered table-striped" id="">
                         <thead>
                             <tr>
                                 <th>ID</th>
@@ -242,7 +259,7 @@
                                 <th>Hành động</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="table_detail">
                             <tr>
                                 <td>1</td>
                                 <td><img src="placeholder-large.png" alt="Biến thể 1 lớn" width="80"></td>
@@ -295,7 +312,23 @@
                             </div>
                         </div>
                     </div>
-
+<div class="mt-3">
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center" id="pagination-detail">
+            <li class="page-item disabled">
+                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Trước</a>
+            </li>
+            <li class="page-item active" aria-current="page">
+                <a class="page-link" href="#">1 <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item">
+                <a class="page-link" href="#">Sau</a>
+            </li>
+        </ul>
+    </nav>
+</div>
                     </div>
 
                 <div id="posts" >
@@ -307,7 +340,7 @@
                                 <button class="btn btn-outline-secondary" type="button" id="searchProductButton"><i class="fas fa-search"></i> Tìm</button>
                             </div>
                         </div>
-                    <table class="table table-bordered table-striped">
+                    <table class="table table-bordered table-striped" id="">
                         <thead>
                             <tr>
                                 <th>ID</th>
@@ -318,7 +351,7 @@
                                 <th>Hành động</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="table_new">
                             <tr>
                                 <td>1</td>
                                 <td>Bài viết mẫu 1</td>
@@ -373,7 +406,45 @@
                             </div>
                         </div>
                     </div>
+                    <div class="mt-3">
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center" id="pagination-new">
+            <li class="page-item disabled">
+                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Trước</a>
+            </li>
+            <li class="page-item active" aria-current="page">
+                <a class="page-link" href="#">1 <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item">
+                <a class="page-link" href="#">Sau</a>
+            </li>
+        </ul>
+    </nav>
+</div>
                     </div>
             </main>
         </div>
     </div>
+    <!-- jquery -->
+	<script src="/ShopProject/assets/js/jquery-1.11.3.min.js"></script>
+	<!-- bootstrap -->
+	<script src="/ShopProject/assets/bootstrap/js/bootstrap.min.js"></script>
+	<!-- count down -->
+	<script src="/ShopProject/assets/js/jquery.countdown.js"></script>
+	<!-- isotope -->
+	<script src="/ShopProject/assets/js/jquery.isotope-3.0.6.min.js"></script>
+	<!-- waypoints -->
+	<script src="/ShopProject/assets/js/waypoints.js"></script>
+	<!-- owl carousel -->
+	<script src="/ShopProject/assets/js/owl.carousel.min.js"></script>
+	<!-- magnific popup -->
+	<script src="/ShopProject/assets/js/jquery.magnific-popup.min.js"></script>
+	<!-- mean menu -->
+	<script src="/ShopProject/assets/js/jquery.meanmenu.min.js"></script>
+	<!-- sticker js -->
+	<script src="/ShopProject/assets/js/sticker.js"></script>
+	<script src="/ShopProject/assets/js/admin.js"></script>
+</body>
+</html>

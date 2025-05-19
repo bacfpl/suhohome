@@ -48,6 +48,22 @@ class ProductModel extends DataBase {
             return []; // Trả về mảng rỗng trong trường hợp lỗi
         }
     }
+
+    public function getProductsName($name): array {
+        $offset = ($page - 1) * $limit;
+        try {
+            $stmt = $this->conn->prepare("SELECT * FROM {$this->tableName} LIMIT :limit OFFSET :offset");
+            $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+            $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            // Ghi log lỗi hoặc xử lý theo cách phù hợp với ứng dụng của bạn
+            error_log("Lỗi khi lấy sản phẩm theo trang: " . $e->getMessage());
+            return []; // Trả về mảng rỗng trong trường hợp lỗi
+        }
+    }
+
     public function getDetailsByPage(int $limit, int $page): array {
         $offset = ($page - 1) * $limit;
         try {
@@ -208,7 +224,7 @@ class ProductModel extends DataBase {
                 }
 
                 // Delete the database record
-                $stmt = $this->conn->prepare("DELETE FROM new WHERE id = :id");
+                $stmt = $this->conn->prepare("DELETE FROM product WHERE id = :id");
                 $stmt->bindParam(':id', $id, PDO::PARAM_INT);
                 $stmt->execute();
                 $rowsDeleted = $stmt->rowCount();

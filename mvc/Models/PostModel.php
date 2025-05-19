@@ -29,15 +29,20 @@ require_once("./mvc/core/Database.php");
                 return []; // Trả về mảng rỗng trong trường hợp lỗi
             }
         }
-        public function getNewPosts(int $limit): array {
+        
+        public function getNewPosts(int $limit, int $currentPage): array {
             try {
-                $stmt = $this->conn->prepare("SELECT * FROM {$this->tableName} ORDER BY date DESC LIMIT :limit");
+                // Tính toán offset dựa trên trang hiện tại và số lượng bài viết trên mỗi trang
+                $offset = ($currentPage - 1) * $limit;
+
+                $stmt = $this->conn->prepare("SELECT * FROM {$this->tableName} ORDER BY date DESC LIMIT :limit OFFSET :offset");
                 $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+                $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
                 $stmt->execute();
                 return $stmt->fetchAll(PDO::FETCH_ASSOC);
             } catch (PDOException $e) {
                 // Ghi log lỗi hoặc xử lý theo cách phù hợp với ứng dụng của bạn
-                error_log("Lỗi khi lấy bài viết mới nhất: " . $e->getMessage());
+                error_log("Lỗi khi lấy bài viết mới nhất (trang {$currentPage}, giới hạn {$limit}): " . $e->getMessage());
                 return []; // Trả về mảng rỗng trong trường hợp lỗi
             }
         }
