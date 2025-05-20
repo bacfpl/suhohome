@@ -149,15 +149,16 @@ require_once("./mvc/Models/ProductModel.php");
                     $name = $_POST['name'] ?? "";
                     if (empty($id) || !is_numeric($id)) {
                     $response = ['status' => 'error', 'message' => 'Invalid post ID.'];
-                    echo json_encode($response);
+             
+                   echo json_encode($response);
                     return;
                     }
                     $limit = 5;
                     $productModel= new ProductModel();
                     $currentPage = isset($_GET['page']) ? intval($_GET['page']) : $index;
-                    $totalProducts = $productModel->getTotalProducts($id);
+                    $totalProducts = $productModel->getTotalProducts($name);
                     $totalProducts = ceil($totalProducts / $limit);
-                    $product = $productModel->getProductsByPage($limit, $currentPage);
+                    $product = $productModel->getProductsByPage($limit, $currentPage,$name);
                     $product["totalPages"]=$totalProducts;
                     echo json_encode($product);
                     
@@ -168,7 +169,7 @@ require_once("./mvc/Models/ProductModel.php");
                 }
                 
         }
-        public static function GetProductsByName($name){
+        public static function GetProductsByName(){
             header('Content-Type: application/json');
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $index = $_POST['index'] ?? 1;
@@ -182,11 +183,11 @@ require_once("./mvc/Models/ProductModel.php");
                     $limit = 5;
                     $productModel= new ProductModel();
                     $currentPage = isset($_GET['page']) ? intval($_GET['page']) : $index;
-                    // $totalProducts = $productModel->getTotalProducts($id);
-                    // $totalProducts = ceil($totalProducts / $limit);
-                    // $product = $productModel->getProductsByPage($limit, $currentPage);
-                    // $product["totalPages"];
-                    // echo json_encode($product);
+                    $totalProducts = $productModel->getTotalProducts($name);
+                    $totalProducts = ceil($totalProducts / $limit);
+                    $product = $productModel->getProductsByPage($limit, $currentPage);
+                    $product["totalPages"];
+                    echo json_encode($product);
                     
                 }
                 else{

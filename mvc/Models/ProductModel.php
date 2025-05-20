@@ -9,18 +9,40 @@ class ProductModel extends DataBase {
      *
      * @return int Tổng số sản phẩm.
      */
-    public function getTotalProducts(): int {
+ public function getTotalProducts(string $name =''): int { // Thêm giá trị mặc định cho $name
         try {
-            $stmt = $this->conn->prepare("SELECT COUNT(*) AS total FROM {$this->tableName}");
+
+            if($name!=""){
+                    $query = "SELECT COUNT(*) AS total FROM {$this->tableName} WHERE name LIKE CONCAT('%', :name, '%')";
+                    $stmt = $this->conn->prepare($query);
+                    $stmt->bindParam(":name", $name, PDO::PARAM_STR);
+                }else{
+                        $query = "SELECT COUNT(*) AS total FROM {$this->tableName} ";
+                        $stmt = $this->conn->prepare($query);
+                }
+            
+        
+            
+
+            // Bind tham số $name vào placeholder
+            // PDO::PARAM_STR chỉ định rằng đây là một chuỗi
+           
+            
             $stmt->execute();
+            
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            return $row['total'];
+            
+            // Trả về tổng số sản phẩm đã đếm được
+            return (int) $row['total']; // Ép kiểu về int để đảm bảo
+            
         } catch (PDOException $e) {
             // Ghi log lỗi hoặc xử lý theo cách phù hợp với ứng dụng của bạn
-            error_log("Lỗi khi lấy tổng số sản phẩm: " . $e->getMessage());
+            error_log("Lỗi khi lấy tổng số sản phẩm theo tên: " . $e->getMessage());
             return 0; // Trả về 0 trong trường hợp lỗi
         }
     }
+
+
     public function getTotalDetails($id): int {
         try {
             $stmt = $this->conn->prepare("SELECT COUNT(*) AS total FROM bt_product WHERE id_product=:id");
@@ -34,10 +56,21 @@ class ProductModel extends DataBase {
             return 0; // Trả về 0 trong trường hợp lỗi
         }
     }
-    public function getProductsByPage(int $limit, int $page): array {
+    public function getProductsByPage(int $limit, int $page,string $name=''): array {
         $offset = ($page - 1) * $limit;
+        
+
+        
         try {
-            $stmt = $this->conn->prepare("SELECT * FROM {$this->tableName} LIMIT :limit OFFSET :offset");
+                    if($name!=""){
+              $stmt = $this->conn->prepare("SELECT * FROM {$this->tableName} WHERE name LIKE CONCAT('%', :name, '%')  LIMIT :limit OFFSET :offset");
+                $stmt->bindParam(':name', $name, PDO::PARAM_STR);
+        }else{
+               $stmt = $this->conn->prepare("SELECT * FROM {$this->tableName}  LIMIT :limit OFFSET :offset");
+        }
+           
+         
+           
             $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
             $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
             $stmt->execute();
@@ -49,20 +82,20 @@ class ProductModel extends DataBase {
         }
     }
 
-    public function getProductsName($name): array {
-        $offset = ($page - 1) * $limit;
-        try {
-            $stmt = $this->conn->prepare("SELECT * FROM {$this->tableName} LIMIT :limit OFFSET :offset");
-            $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
-            $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
-            $stmt->execute();
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            // Ghi log lỗi hoặc xử lý theo cách phù hợp với ứng dụng của bạn
-            error_log("Lỗi khi lấy sản phẩm theo trang: " . $e->getMessage());
-            return []; // Trả về mảng rỗng trong trường hợp lỗi
-        }
-    }
+    // public function getProductsName($name): array {
+    //     $offset = ($page - 1) * $limit;
+    //     try {
+    //         $stmt = $this->conn->prepare("SELECT * FROM {$this->tableName} LIMIT :limit OFFSET :offset");
+    //         $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+    //         $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+    //         $stmt->execute();
+    //         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    //     } catch (PDOException $e) {
+    //         // Ghi log lỗi hoặc xử lý theo cách phù hợp với ứng dụng của bạn
+    //         error_log("Lỗi khi lấy sản phẩm theo trang: " . $e->getMessage());
+    //         return []; // Trả về mảng rỗng trong trường hợp lỗi
+    //     }
+    // }
 
     public function getDetailsByPage(int $limit, int $page): array {
         $offset = ($page - 1) * $limit;

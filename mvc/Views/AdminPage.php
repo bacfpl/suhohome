@@ -216,7 +216,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
-                                    <button type="button " class="btn btn-danger" id="btnDlPrMd"  >Xóa</button>
+                                    <button type="button " class="btn btn-danger" id="btnDlPrMd" >Xóa</button>
                                 </div>
                             </div>
                         </div>

@@ -1,13 +1,17 @@
+var reader = new FileReader();
 var pagination_product = '#pagination-product';
 var pagination_detail = '#pagination-detail';
 var pagination_new = '#pagination-new';
 var tableProduct = "table_product";
 var tableDetail = "table_detail";
 var tableNew = "table_new";
+
+var searchNameProduct ="";
+
 var ProductAddModal = new bootstrap.Modal(document.getElementById('addProductModal'));
 var PostAddModal = new bootstrap.Modal(document.getElementById('addPostModal'));
 
-var idDelete = document.getElementById('id-delete');
+var idFocus =null;
 var savePostButton = document.getElementById('savePostButton');
 var saveProductButton = document.getElementById('saveProductButton');
 var deleteButtonProduct = document.getElementById('btnDlPrMd');
@@ -20,55 +24,78 @@ var inputProductName = document.getElementById('btnDlPrMd');
 var inputProductName = document.getElementById('btnDlPrMd');
 
 
-
 deleteButtonProduct.addEventListener('click', function () {
+  
 
     $.post('/ShopProject/Admin/DeleteProduct',
         {
-            id: idDelete.value
+            id: idFocus
         }, function (data, status) {
             console.log(status);
             if (status === "success") {
-              loadProducts();
+
+              idFocus=null;
               modalDelete.hide();
-               
+            
             }
         })
 })
 
 
+    $("#searchProductButton").on('click', function() {
+      
+
+        searchNameProduct = $("#searchProductName").val();
+        console.log(searchNameProduct)
+       loadProducts(searchNameProduct,1)
+    });
 
 var modalDelete = new bootstrap.Modal(document.getElementById('deleteProductModal'));
 
 saveProductButton.addEventListener('click', function () {
-
+    
     var name = document.getElementById('productName').value;
     var price = document.getElementById('productPrice').value;
     var content = document.getElementById('productDescription').value;
-    var image = document.getElementById('productImage').value;
-
+    var image = document.getElementById('productImage').files[0];
+    const formData = new FormData();
+    formData.append('id', idFocus);
+    formData.append('name', name);
+    formData.append('price', price);
+    formData.append('content', content);
+    formData.append('image', image); // <-- Đính kèm đối tượng File vào FormData
     // Bây giờ bạn có thể sử dụng các biến title, category, content
     // để thực hiện các hành động khác trong script của bạn, ví dụ:
+    console.log("ID:", idFocus);
     console.log("Tiêu đề:", name);
     console.log("Danh mục:", price);
     console.log("Nội dung:", content);
     console.log("Nội dung:", image);
 
     // Gọi một hàm khác để xử lý dữ liệu này
-    $.post("/ShopProject/Admin/AddProduct",
-        {
-            name: name,
-            price: price,
-            content: content,
-            image: image
-        }, function (data, status) {
-            console.log(status)
-            if (status === "success") {
+$.ajax({
+                    url: "/ShopProject/Admin/AddProduct", // URL API của bạn
+                    type: "POST", // Phương thức POST
+                    data: formData, // Truyền FormData vào đây
 
-                loadProducts(1);
-            }
-        }
-    )
+                    // Cực kỳ quan trọng khi gửi file với FormData:
+                    processData: false, // Ngăn jQuery cố gắng chuyển đổi dữ liệu thành chuỗi query params.
+                    contentType: false, // Ngăn jQuery đặt header Content-Type. FormData sẽ tự đặt là multipart/form-data.
+
+                    success: function (response, status) {
+                        console.log("Status:", status);
+                        console.log("Server Response:", response);
+                        if (status === "success") { // Giả sử server trả về { success: true, ... }
+                         
+                            idFocus = null; // Reset idFocus sau khi lưu
+                            loadProducts(searchNameProduct,1);
+                        } 
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.error("Lỗi AJAX:", textStatus, errorThrown, jqXHR.responseText);
+                     
+                    }
+                });
 
     // Đóng modal sau khi xử lý (tùy chọn)
     ProductAddModal.hide();
@@ -102,7 +129,7 @@ function updatePaginationButtonsProduct(currentPage = 1, totalPages) {
         var page = $(this).data('page');
         console.log(page);
         if (page) {
-            loadProducts(page);
+            loadProducts(searchNameProduct,page);
         }
     });
 }
@@ -193,7 +220,9 @@ function updateViewTablesProduct(productsData) {
             editButton.innerHTML = '<i class="fas fa-edit " ></i> Sửa';
             editButton.onclick = function () {
                 // Thêm logic xử lý khi nhấn nút Sửa
+               idFocus = value.id;
               ProductAddModal.show();
+              
             };
             cellActions.appendChild(editButton);
 
@@ -206,7 +235,7 @@ function updateViewTablesProduct(productsData) {
             deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i> Xóa';
             deleteButton.value = value.id;
             deleteButton.onclick = function () {
-                idDelete.value = value.id;
+                idFocus = value.id;
                 modalDelete.show();
 
 
@@ -276,7 +305,7 @@ function updateViewTablesPost(elementName, productsData) {
             editButton.innerHTML = '<i class="fas fa-edit"></i> Sửa';
             editButton.onclick = function () {
                 // Thêm logic xử lý khi nhấn nút Sửa
-                console.log('Sửa sản phẩm ID:', product.id);
+            idFocus=value.id;
                 // Ví dụ: openEditModal(product.id);
             };
             cellActions.appendChild(editButton);
@@ -289,6 +318,7 @@ function updateViewTablesPost(elementName, productsData) {
             deleteButton.classList.add('btn', 'btn-sm', 'btn-danger');
             deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i> Xóa';
             deleteButton.onclick = function () {
+                idFocus=value.id;
                 modalDelete.show();
 
 
@@ -323,10 +353,13 @@ function formatCurrency(number) {
     }
     return number.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
 }
-function loadProducts(index = 1) {
+
+
+function loadProducts(name='',index = 1) {
 
     // Gọi API backend để lấy danh sách sản phẩm mới và cập nhật bảng
     $.post("/ShopProject/Admin/GetProducts", {
+        name:name,
         index: index
     }, function (data, status) {
         if (status == "success") {
@@ -368,7 +401,7 @@ function loadPosts(index = 1) {
 
 $(document).ready(function () {
     // ... (phần smooth scrolling đã có) ...
-    loadProducts(1);
+    loadProducts(searchNameProduct,1);
     loadPosts(1);
 
 
