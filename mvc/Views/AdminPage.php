@@ -291,10 +291,8 @@
                                             <input type="text" class="form-control" id="variantName">
                                         </div>
                                         <div class="form-group">
-                                            <label for="variantProduct">Thuộc sản phẩm:</label>
-                                            <select class="form-control" id="variantProduct">
-                                                <option value="1">Sản phẩm mẫu 1</option>
-                                            </select>
+                                            <label for="variantProductId">ID Sản PhẩmPhẩm:</label>
+                                            <input type="text" class="form-control" id="variantProductId">
                                         </div>
                                         <div class="form-group">
                                             <label for="variantImageLarge">Ảnh biến thể lớn:</label>
@@ -308,7 +306,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-                                    <button type="button" class="btn btn-primary">Lưu</button>
+                                    <button type="button"  id="saveVariantButton" class="btn btn-primary">Lưu</button>
                                 </div>
                             </div>
                         </div>

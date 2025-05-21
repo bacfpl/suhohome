@@ -195,21 +195,30 @@ class ProductModel extends DataBase {
            
         }
     }
-    public function UpdateDeatailOrInsertId($name,$big_image,$small_image,$idProduct=null,$id=null) {
-        try {
+    public function UpdateDeatailOrInsertId($name,$big_image,$small_image,$idProduct,$id=null) {
+                echo $id;
+        try {  
                 if ($id) {
-                    // Update existing bt_product
-                    $stmt = $this->conn->prepare("UPDATE bt_product SET name = :name, img_src_big = :big_img, img_src_small = :small_img WHERE id = :id");
+                      $stmt = $this->conn->prepare("UPDATE bt_product SET name = :name, img_src_big = :big_img, img_src_small = :small_img WHERE id = :id");
                     $stmt->bindParam(':id', $id, PDO::PARAM_INT); // Bind the ID
+                     $stmt->bindParam(':name', $name, PDO::PARAM_STR);
+                    $stmt->bindParam(':big_img', $big_image, PDO::PARAM_STR);
+                    $stmt->bindParam(':small_img', $small_image, PDO::PARAM_STR);
+                    $stmt->execute();
+                                     
                 } else {
-                    // Insert new bt_product
-                    $stmt = $this->conn->prepare("INSERT INTO bt_product (name, img_src_big, img_src_small) VALUES (:name,:big_img,:small_img)");
-                }
+                   
+
+                     $stmt = $this->conn->prepare("INSERT INTO bt_product (name, img_src_big, img_src_small,id_product) VALUES (:name,:big_img,:small_img,:id_product)");
+                    $stmt->bindParam(':id_product', $idProduct, PDO::PARAM_INT);
                     $stmt->bindParam(':name', $name, PDO::PARAM_STR);
                     $stmt->bindParam(':big_img', $big_image, PDO::PARAM_STR);
                     $stmt->bindParam(':small_img', $small_image, PDO::PARAM_STR);
-                    $stmt->bindParam(':id_product', $idProduct, PDO::PARAM_INT);
-                    $stmt->execute();
+                    $stmt->execute(); 
+                }
+                   
+
+                    
 
                 // LẤY LẠI DATA ĐÃ THÊM VÀO
                 if ($id) {

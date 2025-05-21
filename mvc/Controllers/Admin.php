@@ -370,10 +370,10 @@ require_once("./mvc/Models/ProductModel.php");
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $ten = $_POST['name'] ?? '';
                 $big_img = $_FILES['big_img'] ?? '';
-                $small_img = $_POST['small_img'] ?? '';
+                $small_img = $_FILES['small_img'] ?? '';
 
                 $id_product = $_POST['id_product'] ?? null;
-                $anh_ten = '';
+               
                 $id = $_POST['id'] ?? null; // Get the ID for updates
 
                 // Input Validation
@@ -384,17 +384,11 @@ require_once("./mvc/Models/ProductModel.php");
                     $errors['name'] = 'Name cannot exceed 255 characters.';
                 }
 
-                if (empty($content)) {
-                    $errors['content'] = 'Content is required.';
+                if (empty($id_product)) {
+                    $errors['id_product'] = 'Id_Product is required.';
                 }
 
-                if (empty($price)) {
-                    $errors['user'] = 'price is required.';
-                } elseif (strlen($price) > 255) {
-                    $errors['price'] = 'price cannot exceed 255 characters.';
-                }
-
-                
+      
 
 
                 if ($big_img && $big_img['error'] === UPLOAD_ERR_OK) {
@@ -428,49 +422,53 @@ require_once("./mvc/Models/ProductModel.php");
                     echo json_encode($response);
                     return;
                 }
+
                 // File upload handling
-                if ($small_img && $small_img['error'] === UPLOAD_ERR_OK && $big_img && $big_img===UPLOAD_ERR_OK) {
-                    $big_anh_ten = uniqid() . '_big_' . $big_img['name'];
-                    $small_anh_ten = uniqid() . '_small_' . $small_img['name'];
-                    $upload_dir = "uploads/products/color";
 
-                    if (!is_dir($upload_dir)) {
-                        mkdir($upload_dir, 0755, true);
-                    }
-                    $upload_path_1 = $upload_dir . $big_anh_ten;
-                    $upload_path_2 = $upload_dir . $small_anh_ten;
+                if ($small_img && $small_img['error'] === UPLOAD_ERR_OK && $big_img && $big_img["error"]===UPLOAD_ERR_OK) {
+                        $big_anh_ten = uniqid() . '_big_' . $big_img['name'];
+                        $small_anh_ten = uniqid() . '_small_' . $small_img['name'];
+                        $upload_dir = "uploads/products/color";
+
+                        if (!is_dir($upload_dir)) {
+                            mkdir($upload_dir, 0755, true);
+                        }
+                        $upload_path_1 = $upload_dir . $big_anh_ten;
+                        $upload_path_2 = $upload_dir . $small_anh_ten;
 
 
-                    if (!move_uploaded_file($big_img['tmp_name'], $upload_path_1)) {
-                        $response = ['status' => 'error', 'message' => 'Failed to upload image.'];
+                        if (!move_uploaded_file($big_img['tmp_name'], $upload_path_1)) {
+                            $response = ['status' => 'error', 'message' => 'Failed to upload image.'];
+                            echo json_encode($response);
+                            return;
+                        }
+ 
+                        if (!move_uploaded_file($small_img['tmp_name'], $upload_path_2)) {
+                            $response = ['status' => 'error', 'message' => 'Failed to upload image.'];
+                            echo json_encode($response);
+                            return;
+                        }
+
+                        $anh_ten_big = $upload_path_1;
+                        $anh_ten_small = $upload_path_2;
+                        $productModle = new ProductModel(); 
+                        $insertedProduct = $productModle->UpdateDeatailOrInsertId($ten,$anh_ten_big,$anh_ten_small,(int)$id_product,$id); //use insert
+
+                        if ($insertedProduct) {
+                            $response = ['status' => 'success', 'message' => 'Detail added/updated successfully!', 'data' => $insertedProduct];
+                        } else {
+                            $response = ['status' => 'error', 'message' => 'Failed to add/update Detail.'];
+                        }
+
                         echo json_encode($response);
-                        return;
-                    }
-
-                    if (!move_uploaded_file($small_img['tmp_name'], $upload_path_2)) {
-                        $response = ['status' => 'error', 'message' => 'Failed to upload image.'];
-                        echo json_encode($response);
-                        return;
-                    }
-                    $anh_ten_big = $upload_path_1;
-                    $anh_ten_small = $upload_path_2;
-
-
-                } else if ($big_img && $big_img['error'] !== UPLOAD_ERR_NO_FILE && $small_img && $small_img['error'] !== UPLOAD_ERR_NO_FILE) {
+                    } 
+                else if ($big_img && $big_img['error'] !== UPLOAD_ERR_NO_FILE && $small_img && $small_img['error'] !== UPLOAD_ERR_NO_FILE) {
                     $response = ['status' => 'error', 'message' => 'Image upload error: '];
                     echo json_encode($response);
                     return;
+                    
                 }
-            $productModle = new ProductModel(); 
-                $insertedProduct = $productModle->UpdateDeatailOrInsertId($ten,$anh_ten_big,$anh_ten_small,$id_product,$id); //use insert
-
-                if ($insertedProduct) {
-                    $response = ['status' => 'success', 'message' => 'Detail added/updated successfully!', 'data' => $insertedProduct];
-                } else {
-                    $response = ['status' => 'error', 'message' => 'Failed to add/update Detail.'];
-                }
-
-                echo json_encode($response);
+               
             } else {
                 echo json_encode(['status' => 'error', 'message' => 'Invalid request method. Use POST.']);
             }
