@@ -273,7 +273,7 @@ require_once("./mvc/Models/ProductModel.php");
                 if ($insertedProduct) {
                     $response = ['status' => 'success', 'message' => 'Product added/updated successfully!', 'data' => $insertedProduct];
                 } else {
-                    $response = ['status' => 'error', 'message' => 'Failed to add/update Product.'];
+                    $response = ['status' => 'error', 'message' => 'Failed to add or update Product.'];
                 }
 
                 echo json_encode($response);
@@ -316,7 +316,7 @@ require_once("./mvc/Models/ProductModel.php");
 
                 // Input Validation for ID
                 if (empty($id) || !is_numeric($id)) {
-                    $response = ['status' => 'error', 'message' => 'Invalid post ID.'];
+                    $response = ['status' => 'error', 'message' => 'Invalid product ID.'];
                     echo json_encode($response);
                     return;
                 }

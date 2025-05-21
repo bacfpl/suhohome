@@ -244,9 +244,9 @@
                     <h2><i class="fas fa-swatchbook"></i> Quản lý Biến thể Sản phẩm</h2>
                     <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#addVariantModal"><i class="fas fa-plus"></i> Thêm Biến thể</button>
                     <div class="input-group mt-2">
-                            <input type="text" class="form-control" id="searchProductName" placeholder="Tìm kiếm theo mã sản phẩm">
+                            <input type="text" class="form-control" id="searchProductId" placeholder="Tìm kiếm theo mã sản phẩm">
                             <div class="input-group-append">
-                                <button class="btn btn-outline-secondary" type="button" id="searchProductButton"><i class="fas fa-search"></i> Tìm</button>
+                                <button class="btn btn-outline-secondary" type="button" id="searchProductIdButton"><i class="fas fa-search"></i> Tìm</button>
                             </div>
                         </div>
                     <table class="table table-bordered table-striped" id="">
@@ -262,15 +262,7 @@
                         </thead>
                         <tbody id="table_detail">
                             <tr>
-                                <td>1</td>
-                                <td><img src="placeholder-large.png" alt="Biến thể 1 lớn" width="80"></td>
-                                <td><img src="placeholder-small.png" alt="Biến thể 1 nhỏ" width="50"></td>
-                                <td>Màu đỏ, Size S</td>
-                                <td>Sản phẩm mẫu 1</td>
-                                <td>
-                                    <button class="btn btn-sm btn-info"><i class="fas fa-edit"></i> Sửa</button>
-                                    <button class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i> Xóa</button>
-                                </td>
+                              
                             </tr>
                             </tbody>
                     </table>
@@ -291,7 +283,7 @@
                                             <input type="text" class="form-control" id="variantName">
                                         </div>
                                         <div class="form-group">
-                                            <label for="variantProductId">ID Sản PhẩmPhẩm:</label>
+                                            <label for="variantProductId">ID Sản Phẩm:</label>
                                             <input type="text" class="form-control" id="variantProductId">
                                         </div>
                                         <div class="form-group">
