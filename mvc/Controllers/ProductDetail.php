@@ -22,7 +22,7 @@ require_once("./mvc/Models/ProductModel.php");
                 } 
             }else{
                 $show = parent :: view("MainPage", 
-                ["Page" => "Product"
+                ["Page" => "Product1"
             ]);
 
             }

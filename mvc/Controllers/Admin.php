@@ -6,11 +6,43 @@ require_once("./mvc/Models/ProductModel.php");
 //Trang chủ
     class Admin extends Controller {
         public static function showMainPage() {
-          
-            $show = parent :: view("AdminPage", 
-            ["Page" => "Admin"]);
+             
+             
+                    if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
+                    // Nếu chưa đăng nhập, chuyển hướng về trang đăng nhập
+                     // Có thể thêm tham số để biết sau khi đăng nhập thành công thì quay về trang Admin
+                    header("Location: http://localhost/ShopProject/Admin/Login");
+                     exit(); // Dừng thực thi script
+                     
+                    
+                    }else{
+                        $show = parent :: view("AdminPage", 
+                    ["Page" => "Admin"]);
+                    }
+           
         }
         
+            public static function Login() {
+                   
+                 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                     $user = $_POST['username'] ?? '';
+                     $password = $_POST['password'] ?? '';
+                     if($user=="admin12@"||$password=="abcD123!@"){
+                         $_SESSION['logged_in']=true;
+                         $response = ['status' => 'success'];
+                        echo json_encode($response);
+                     }else{
+                         $response = ['status' => 'error', 'message' => 'Validation errors', 'errors' =>"Sai pass hoặc tên"];
+                        echo json_encode($response);
+                     }
+
+              }else{
+                 $show = parent :: view("Login", 
+                 ["Page" => "Admin"]);
+              }
+           
+           
+        }
         public static function GetPosts() {
                 header('Content-Type: application/json');
                 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -473,6 +505,114 @@ require_once("./mvc/Models/ProductModel.php");
                 echo json_encode(['status' => 'error', 'message' => 'Invalid request method. Use POST.']);
             }
         }
+      public static function UpdateDetail() {
+            header('Content-Type: application/json');
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $ten = $_POST['name'] ?? '';
+                $big_img = $_FILES['big_img'] ?? '';
+                $small_img = $_FILES['small_img'] ?? '';
+
+                $id_product = $_POST['id_product'] ?? null;
+               
+                $id = $_POST['id'] ?? null; // Get the ID for updates
+
+                // Input Validation
+                $errors = [];
+                if (empty($ten)) {
+                    $errors['name'] = 'Name is required.';
+                } elseif (strlen($ten) > 255) {
+                    $errors['name'] = 'Name cannot exceed 255 characters.';
+                }
+
+                if (empty($id_product)) {
+                    $errors['id_product'] = 'Id_Product is required.';
+                }
+
+      
+
+
+                if ($big_img && $big_img['error'] === UPLOAD_ERR_OK) {
+                    $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
+                    if (!in_array($big_img['type'], $allowed_types)) {
+                        $errors['image'] = 'Invalid file type. Only JPG, PNG, and GIF are allowed.';
+                    }
+
+                    if ($big_img['size'] > 2 * 1024 * 1024) { // 2MB limit
+                        $errors['image'] = 'Image size exceeds 2MB.';
+                    }
+                } else if ($big_img && $big_img['error'] !== UPLOAD_ERR_NO_FILE) {
+                    $errors['image'] = 'Image upload error: ' . $big_img['error'];
+                }
+                if ($small_img && $small_img['error'] === UPLOAD_ERR_OK) {
+                    $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
+                    if (!in_array($small_img['type'], $allowed_types)) {
+                        $errors['image'] = 'Invalid file type. Only JPG, PNG, and GIF are allowed.';
+                    }
+
+                    if ($small_img['size'] > 2 * 1024 * 1024) { // 2MB limit
+                        $errors['image'] = 'Image size exceeds 2MB.';
+                    }
+                } else if ($small_img && $small_img['error'] !== UPLOAD_ERR_NO_FILE) {
+                    $errors['image'] = 'Image upload error: ' . $small_img['error'];
+                }
+
+
+                if (!empty($errors)) {
+                    $response = ['status' => 'error', 'message' => 'Validation errors', 'errors' => $errors];
+                    echo json_encode($response);
+                    return;
+                }
+
+                // File upload handling
+
+                if ($small_img && $small_img['error'] === UPLOAD_ERR_OK && $big_img && $big_img["error"]===UPLOAD_ERR_OK) {
+                        $big_anh_ten = uniqid() . '_big_' . $big_img['name'];
+                        $small_anh_ten = uniqid() . '_small_' . $small_img['name'];
+                        $upload_dir = "uploads/products/color";
+
+                        if (!is_dir($upload_dir)) {
+                            mkdir($upload_dir, 0755, true);
+                        }
+                        $upload_path_1 = $upload_dir . $big_anh_ten;
+                        $upload_path_2 = $upload_dir . $small_anh_ten;
+
+
+                        if (!move_uploaded_file($big_img['tmp_name'], $upload_path_1)) {
+                            $response = ['status' => 'error', 'message' => 'Failed to upload image.'];
+                            echo json_encode($response);
+                            return;
+                        }
+ 
+                        if (!move_uploaded_file($small_img['tmp_name'], $upload_path_2)) {
+                            $response = ['status' => 'error', 'message' => 'Failed to upload image.'];
+                            echo json_encode($response);
+                            return;
+                        }
+
+                        $anh_ten_big = $upload_path_1;
+                        $anh_ten_small = $upload_path_2;
+                        $productModle = new ProductModel(); 
+                        $insertedProduct = $productModle->UpdateDeatailOrInsertId($ten,$anh_ten_big,$anh_ten_small,(int)$id_product,$id); //use insert
+
+                        if ($insertedProduct) {
+                            $response = ['status' => 'success', 'message' => 'Detail added/updated successfully!', 'data' => $insertedProduct];
+                        } else {
+                            $response = ['status' => 'error', 'message' => 'Failed to add/update Detail.'];
+                        }
+
+                        echo json_encode($response);
+                    } 
+                else if ($big_img && $big_img['error'] !== UPLOAD_ERR_NO_FILE && $small_img && $small_img['error'] !== UPLOAD_ERR_NO_FILE) {
+                    $response = ['status' => 'error', 'message' => 'Image upload error: '];
+                    echo json_encode($response);
+                    return;
+                    
+                }
+               
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Invalid request method. Use POST.']);
+            }
+        }       
 
         
 }

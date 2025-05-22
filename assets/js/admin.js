@@ -11,11 +11,13 @@ var tableDetail = "table_detail";
 var tableNew = "table_new";
 
 var searchNameProduct ="";
+var searchNamePost="";
 var serachIdProduct=0;
 
 var ProductAddModal = new bootstrap.Modal(document.getElementById('addProductModal'));
 var DetailAddModal = new bootstrap.Modal(document.getElementById('addVariantModal'));
 var PostAddModal = new bootstrap.Modal(document.getElementById('addPostModal'));
+var modalDelete = new bootstrap.Modal(document.getElementById('deleteProductModal'));
 
 var idFocus =null;
 var idProduct=null;
@@ -26,12 +28,11 @@ var saveDetailButton = document.getElementById('saveVariantButton');
 var deleteButtonProduct = document.getElementById('btnDlPrMd');
 
 
+
 $('#addProductModal').on('hide.bs.modal', function (event) {
     console.log('Product Add Modal is about to hide!');
     idFocus=null;
 });
-
-
 saveDetailButton.addEventListener("click",function(){
     var name = document.getElementById('variantName').value;
     var imgLarge = document.getElementById('variantImageLarge').files[0];
@@ -48,7 +49,7 @@ saveDetailButton.addEventListener("click",function(){
     formData.append('id_product',productId );
     formData.append('small_img', imgSmall); // <-- Đính kèm đối tượng File vào FormData
 
-
+  
     // Gọi một hàm khác để xử lý dữ liệu này
 $.ajax({
                     url: "/ShopProject/Admin/AddDetail", // URL API của bạn
@@ -80,8 +81,47 @@ $.ajax({
     // Đóng modal sau khi xử lý (tùy chọn)
     DetailAddModal.hide();
 })
+savePostButton.addEventListener("click",function(){
 
+    var name=$("#postTitle").val();
+    var user=$("#postAuthor").val();
+    var date=$("#postDate").val();
+    var content=$("#postContent").val();
+    var image=$("#postImage")[0].files[0];
+        const formData=new FormData();
+        formData.append("name",name);
+        formData.append("user",user);
+        formData.append("date",date);
+        formData.append("content",content);
+        formData.append("image",image);
+        $.ajax({
+               url: "/ShopProject/Admin/AddPost", // URL API của bạn
+                    type: "POST", // Phương thức POST
+                    data: formData, // Truyền FormData vào đây
 
+                    // Cực kỳ quan trọng khi gửi file với FormData:
+                    processData: false, // Ngăn jQuery cố gắng chuyển đổi dữ liệu thành chuỗi query params.
+                    contentType: false, // Ngăn jQuery đặt header Content-Type. FormData sẽ tự đặt là multipart/form-data.
+
+                    success: function (response, status) {
+                        console.log("Status:", status);
+                        console.log("Server Response:", response);
+                        if (status === "success") { // Giả sử server trả về { success: true, ... }
+                         
+                            idFocus = null; // Reset idFocus sau khi lưu
+                            $("#addPostModal").modal("hide");
+                            loadPosts(idProduct,1);
+                            
+                        } 
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                         $("#addPostModal").modal("hide");
+                        console.error("Lỗi AJAX:", textStatus, errorThrown, jqXHR.responseText);
+                     
+                    }
+        })
+
+})
 deleteButtonProduct.addEventListener('click', function () {
 
     switch(action){
@@ -138,31 +178,21 @@ deleteButtonProduct.addEventListener('click', function () {
 
    
 })
-
-
-
-
-    $("#searchProductButton").on('click', function() {
+$("#searchProductButton").on('click', function() {
       
 
         searchNameProduct = $("#searchProductName").val();
         console.log(searchNameProduct)
        loadProducts(searchNameProduct,1)
-    });
-
-    
-    $("#searchProductIdButton").on('click', function() {
+});
+$("#searchProductIdButton").on('click', function() {
       
 
         serachIdProduct = $("#searchProductId").val();
         loadDetails(serachIdProduct,1);
         
 
-    });
-
-
-var modalDelete = new bootstrap.Modal(document.getElementById('deleteProductModal'));
-
+});
 saveProductButton.addEventListener('click', function () {
     
     var name = document.getElementById('productName').value;
@@ -214,7 +244,6 @@ $.ajax({
     // Đóng modal sau khi xử lý (tùy chọn)
     ProductAddModal.hide();
 })
-
 function updatePaginationButtonsProduct(currentPage = 1, totalPages) {
     var pagination = $(pagination_product);
     pagination.empty(); // Xóa các nút phân trang cũ
@@ -247,8 +276,6 @@ function updatePaginationButtonsProduct(currentPage = 1, totalPages) {
         }
     });
 }
-
-
 function updatePaginationButtonsNew(currentPage = 1, totalPages) {
     console.log(totalPages)
     var pagination = $(pagination_new);
@@ -313,9 +340,6 @@ function updatePaginationButtonsDetail(currentPage = 1, totalPages) {
         }
     });
 }
-
-
-
 function updateViewTablesProduct(productsData) {
     var tableBody = document.getElementById(tableProduct)
 
@@ -423,7 +447,6 @@ function updateViewTablesProduct(productsData) {
 
 
 }
-
 function updateViewTablesPost(elementName, productsData) {
     var tableBody = document.getElementById(elementName)
 
@@ -479,9 +502,15 @@ function updateViewTablesPost(elementName, productsData) {
             editButton.classList.add('btn', 'btn-sm', 'btn-info');
             editButton.innerHTML = '<i class="fas fa-edit"></i> Sửa';
             editButton.onclick = function () {
-                // Thêm logic xử lý khi nhấn nút Sửa
-            idFocus=value.id;
-                // Ví dụ: openEditModal(product.id);
+                
+                idFocus=value.id;
+                $("#postTitle").val(value.name);
+                $("#postTitle").val(value.user);
+                $("#postTitle").val(value.date);
+                $("#postTitle").val(value.content);
+
+                $("#addPostModal").modal("show");
+
             };
             cellActions.appendChild(editButton);
 
@@ -493,6 +522,7 @@ function updateViewTablesPost(elementName, productsData) {
             deleteButton.classList.add('btn', 'btn-sm', 'btn-danger');
             deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i> Xóa';
             deleteButton.onclick = function () {
+                action=ACTION_DEL_POST;
                 idFocus=value.id;
                 modalDelete.show();
 
@@ -553,16 +583,7 @@ function updateViewTablesDetail(elementName, productsData) {
             const cellProductId = row.insertCell();
             cellProductId.textContent ="ID: "+value.id_product;
             const cellActions = row.insertCell();
-            // Tạo nút Sửa
-            const editButton = document.createElement('button');
-            editButton.classList.add('btn', 'btn-sm', 'btn-info');
-            editButton.innerHTML = '<i class="fas fa-edit"></i> Sửa';
-            editButton.onclick = function () {
-                // Thêm logic xử lý khi nhấn nút Sửa
-            idFocus=value.id;
-                // Ví dụ: openEditModal(product.id);
-            };
-            cellActions.appendChild(editButton);
+            
 
             // Tạo khoảng cách giữa các nút (tùy chọn)
             cellActions.appendChild(document.createTextNode(' ')); // Thêm một khoảng trắng
@@ -608,8 +629,6 @@ function formatCurrency(number) {
     }
     return number.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
 }
-
-
 function loadProducts(name='',index = 1) {
 
     // Gọi API backend để lấy danh sách sản phẩm mới và cập nhật bảng
@@ -618,7 +637,7 @@ function loadProducts(name='',index = 1) {
         index: index
     }, function (data, status) {
         if (status == "success") {
-
+            
             updatePaginationButtonsProduct(index, data["totalPages"]);
             delete data["totalPages"];
             console.log(data);
@@ -630,13 +649,11 @@ function loadProducts(name='',index = 1) {
     });
 
 }
-
-
-
-function loadPosts(index = 1) {
+function loadPosts(id=null,index = 1) {
 
     // Gọi API backend để lấy danh sách sản phẩm mới và cập nhật bảng
     $.post("/ShopProject/Admin/GetPosts", {
+        id:id,
         index: index
     }, function (data, status) {
         if (status == "success") {
@@ -671,12 +688,11 @@ function loadDetails(id=null,index = 1) {
     });
 
 }
-
-
-
 $(document).ready(function () {
     // ... (phần smooth scrolling đã có) ...
     loadProducts(searchNameProduct,1);
+        loadPosts(searchNamePost,1);
+
 
 
 

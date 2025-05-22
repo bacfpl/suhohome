@@ -46,42 +46,13 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="#"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
-                </li>
-            </ul>
+            
         </div>
     </nav>
 
     <div class="container-fluid">
         <div class="row">
-            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
-                <div class="sidebar-sticky pt-3">
-                    <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link active" href="#dashboard">
-                                <i class="fas fa-tachometer-alt"></i> Dashboard <span class="sr-only">(current)</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#products">
-                                <i class="fas fa-box-open"></i> Quản lý Sản phẩm
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#variants">
-                                <i class="fas fa-swatchbook"></i> Quản lý Biến thể
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#posts">
-                                <i class="fas fa-newspaper"></i> Quản lý Bài Post
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
+
 
             <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
                 <div id="dashboard">

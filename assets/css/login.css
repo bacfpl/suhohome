@@ -1,0 +1,97 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f2f5; /* Màu nền nhẹ nhàng */
+    display: flex;
+    justify-content: center; /* Căn giữa theo chiều ngang */
+    align-items: center; /* Căn giữa theo chiều dọc */
+    min-height: 100vh; /* Chiếm toàn bộ chiều cao màn hình */
+    margin: 0;
+    padding: 20px; /* Khoảng đệm tổng thể */
+    box-sizing: border-box; /* Đảm bảo padding không làm tràn */
+}
+
+.login-container {
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Đổ bóng nhẹ nhàng */
+    width: 100%;
+    max-width: 400px; /* Giới hạn chiều rộng tối đa của form */
+    text-align: center;
+}
+
+.login-form h2 {
+    margin-bottom: 30px;
+    color: #333;
+    font-size: 28px;
+}
+
+.input-group {
+    margin-bottom: 20px;
+    text-align: left; /* Căn lề trái cho label và input */
+}
+
+.input-group label {
+    display: block; /* Đảm bảo label nằm trên input */
+    margin-bottom: 8px;
+    color: #555;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.input-group input[type="text"],
+.input-group input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box; /* Quan trọng để padding không làm input tràn ra */
+    font-size: 16px;
+}
+
+.input-group input[type="text"]:focus,
+.input-group input[type="password"]:focus {
+    border-color: #007bff; /* Viền xanh khi focus */
+    outline: none; /* Bỏ viền mặc định của trình duyệt */
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25); /* Đổ bóng nhẹ khi focus */
+}
+
+.login-button {
+    width: 100%;
+    padding: 12px 20px;
+    background-color: #007bff; /* Màu xanh dương chủ đạo */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* Hiệu ứng chuyển màu khi hover */
+}
+
+.login-button:hover {
+    background-color: #0056b3; /* Màu xanh đậm hơn khi hover */
+}
+
+.forgot-password,
+.signup-link {
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+.forgot-password a,
+.signup-link a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.forgot-password a:hover,
+.signup-link a:hover {
+    text-decoration: underline;
+}
+
+.message-text {
+    margin-top: 20px;
+    font-weight: bold;
+    font-size: 15px;
+}

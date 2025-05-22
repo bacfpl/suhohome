@@ -66,7 +66,7 @@ require_once("./mvc/core/Database.php");
                 }
         }
         public function insert($name,$user,$date,$content,$image,$id=null) {
-                echo $date;
+            
             try {
                 if ($id) {
                     // Update existing post
