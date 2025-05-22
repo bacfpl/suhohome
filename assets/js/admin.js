@@ -18,6 +18,7 @@ var DetailAddModal = new bootstrap.Modal(document.getElementById('addVariantModa
 var PostAddModal = new bootstrap.Modal(document.getElementById('addPostModal'));
 
 var idFocus =null;
+var idProduct=null;
 var savePostButton = document.getElementById('savePostButton');
 var saveProductButton = document.getElementById('saveProductButton');
 var saveDetailButton = document.getElementById('saveVariantButton');
@@ -35,7 +36,8 @@ saveDetailButton.addEventListener("click",function(){
     var name = document.getElementById('variantName').value;
     var imgLarge = document.getElementById('variantImageLarge').files[0];
     var imgSmall = document.getElementById('variantImageSmall').files[0];
-    var productId=document.getElementById('variantProductId').value;
+    var productId=$('#variantProductId').val();
+    console.log(productId);
     const formData = new FormData();
     if(idFocus!=null){
   formData.append('id', idFocus);
@@ -63,11 +65,13 @@ $.ajax({
                         if (status === "success") { // Giả sử server trả về { success: true, ... }
                          
                             idFocus = null; // Reset idFocus sau khi lưu
-                            loadProducts(searchNameProduct,1);
+                            $("#addVariantModal").modal("hide");
+                            loadDetails(idProduct,1);
                             
                         } 
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
+                         $("#addVariantModal").modal("hide");
                         console.error("Lỗi AJAX:", textStatus, errorThrown, jqXHR.responseText);
                      
                     }
@@ -88,7 +92,6 @@ deleteButtonProduct.addEventListener('click', function () {
         }, function (data, status) {
             console.log(status);
             if (status === "success") {
-
               idFocus=null;
               modalDelete.hide();
               loadProducts(searchNameProduct,1)
@@ -123,7 +126,7 @@ deleteButtonProduct.addEventListener('click', function () {
 
               idFocus=null;
               modalDelete.hide();
-              loadDetails(serachIdProduct,1);
+              loadDetails(productId,1);
             
             }
         })
@@ -136,23 +139,7 @@ deleteButtonProduct.addEventListener('click', function () {
    
 })
 
-deleteButtonDetail.addEventListener('click', function () {
-  
 
-    $.post('/ShopProject/Admin/DeleteProduct',
-        {
-            id: idFocus
-        }, function (data, status) {
-            console.log(status);
-            if (status === "success") {
-
-              idFocus=null;
-              modalDelete.hide();
-              loadProducts(searchNameProduct,1)
-            
-            }
-        })
-})
 
 
     $("#searchProductButton").on('click', function() {
@@ -400,6 +387,35 @@ function updateViewTablesProduct(productsData) {
 
             }
             cellActions.appendChild(deleteButton);
+            cellActions.appendChild(document.createTextNode(' ')); // Thêm một khoảng trắng
+
+            const showDetailButton = document.createElement('button');
+            showDetailButton.classList.add('btn', 'btn-sm', 'btn-danger');
+            showDetailButton.innerHTML = '<i class="fas fa-trash-alt"></i> Hiện biến thể';
+            showDetailButton.value = value.id;
+            showDetailButton.onclick = function () {
+                idFocus = value.id;
+                idProduct=value.id;
+                loadDetails(value.id,1);
+
+
+            }
+            cellActions.appendChild(showDetailButton);
+
+                        cellActions.appendChild(document.createTextNode(' ')); // Thêm một khoảng trắng
+
+            const addDetailButton = document.createElement('button');
+            addDetailButton.classList.add('btn', 'btn-sm', 'btn-danger');
+            addDetailButton.innerHTML = '<i class="fas fa-trash-alt"></i> Thêm biến thể';
+            addDetailButton.value = value.id;
+            addDetailButton.onclick = function () {
+                $("#addVariantModal").modal('show');
+                $("#variantProductId").val(value.id);
+                idProduct=value.id;
+
+            }
+            cellActions.appendChild(addDetailButton);
+            
 
         }
 
@@ -556,7 +572,8 @@ function updateViewTablesDetail(elementName, productsData) {
             deleteButton.classList.add('btn', 'btn-sm', 'btn-danger');
             deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i> Xóa';
             deleteButton.onclick = function () {
-                idFocus=value.id;
+                productId=value.id;
+                action=ACTION_DEL_DETAI;
                 modalDelete.show();
 
 
@@ -636,7 +653,7 @@ function loadPosts(index = 1) {
 }
 function loadDetails(id=null,index = 1) {
  
-
+    console.log(id);
     // Gọi API backend để lấy danh sách sản phẩm mới và cập nhật bảng
     $.post("/ShopProject/Admin/GetDetail", {
         id_product:id,

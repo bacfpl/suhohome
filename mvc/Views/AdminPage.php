@@ -242,13 +242,7 @@
 
                 <div id="variants" >
                     <h2><i class="fas fa-swatchbook"></i> Quản lý Biến thể Sản phẩm</h2>
-                    <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#addVariantModal"><i class="fas fa-plus"></i> Thêm Biến thể</button>
-                    <div class="input-group mt-2">
-                            <input type="text" class="form-control" id="searchProductId" placeholder="Tìm kiếm theo mã sản phẩm">
-                            <div class="input-group-append">
-                                <button class="btn btn-outline-secondary" type="button" id="searchProductIdButton"><i class="fas fa-search"></i> Tìm</button>
-                            </div>
-                        </div>
+                    
                     <table class="table table-bordered table-striped" id="">
                         <thead>
                             <tr>

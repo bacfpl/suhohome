@@ -160,16 +160,13 @@ class ProductModel extends DataBase {
         }
     }
     public function insertProduct($name,$price,$img,$content,$id=null) {
-              echo $id;
-               echo $id==1;
+              
         try {
             if ($id) {
               
                 $stmt = $this->conn->prepare("UPDATE product SET name = :name, price = :price, img_src = :image, mo_ta = :content WHERE id = :id");
                 $stmt->bindParam(':id', $id, PDO::PARAM_INT); // Bind the ID
             } else {
-                                echo "Insert";
-
     
                 $stmt = $this->conn->prepare("INSERT INTO product (name, price, img_src, mo_ta) VALUES (:name,:price,:image,:content)");
             }
@@ -199,7 +196,7 @@ class ProductModel extends DataBase {
         }
     }
     public function UpdateDeatailOrInsertId($name,$big_image,$small_image,$idProduct,$id=null) {
-                echo $id;
+ 
         try {  
                 if ($id) {
                       $stmt = $this->conn->prepare("UPDATE bt_product SET name = :name, img_src_big = :big_img, img_src_small = :small_img WHERE id = :id");
